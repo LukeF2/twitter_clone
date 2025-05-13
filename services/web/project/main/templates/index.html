@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Welcome to Twitter Clone</h1>
+    {% if current_user.is_authenticated %}
+        <a href="{{ url_for('main.tweet') }}" class="btn btn-primary">New Tweet</a>
+    {% endif %}
+    
+    <div class="tweets">
+        {% for tweet in tweets %}
+            <div class="tweet">
+                <div class="tweet-header">
+                    <a href="{{ url_for('main.user', username=tweet.author.username) }}">
+                        {{ tweet.author.username }}
+                    </a>
+                    <span class="timestamp">{{ tweet.created_at.strftime('%Y-%m-%d %H:%M') }}</span>
+                </div>
+                <div class="tweet-content">
+                    {{ tweet.content }}
+                </div>
+                {% if current_user.is_authenticated %}
+                    <div class="tweet-actions">
+                        <form action="{{ url_for('main.like', tweet_id=tweet.id) }}" method="post">
+                            <button type="submit" class="btn btn-sm btn-outline-primary">
+                                {% if current_user.id in tweet.likes|map(attribute='user_id')|list %}
+                                    Unlike
+                                {% else %}
+                                    Like
+                                {% endif %}
+                            </button>
+                        </form>
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %} 

@@ -1,0 +1,46 @@
+name: tests
+
+on:
+  push:
+    branches: [ '*' ]
+  pull_request:
+    branches: [ '*' ]
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Setup dependencies
+      run: |
+        pip3 install -r services/web/requirements.txt
+        pip install faker sqlalchemy psycopg2-binary
+    
+    - name: Create .env.dev file
+      run: |
+        echo "DATABASE_URL=postgresql://hello_flask:hello_flask@db:5432/hello_flask_dev" > .env.dev
+        echo "SECRET_KEY=test-secret-key" >> .env.dev
+        echo "APP_FOLDER=/usr/src/app" >> .env.dev
+    
+    - name: Start containers and test
+      run: |
+        docker compose up -d --build
+        docker ps -a
+        sleep 20
+        
+        # Load schema
+        docker compose exec -T db psql -U hello_flask -d hello_flask_dev -f /docker-entrypoint-initdb.d/schema.sql
+        
+        # Load test data (100 rows for testing)
+        docker compose exec -T web python services/postgres/load_data.py 100
+        
+        # Verify data was loaded
+        docker compose exec -T db psql -U hello_flask -d hello_flask_dev -c "SELECT COUNT(*) FROM users;"
+        docker compose exec -T db psql -U hello_flask -d hello_flask_dev -c "SELECT COUNT(*) FROM tweets;"
+        docker compose exec -T db psql -U hello_flask -d hello_flask_dev -c "SELECT COUNT(*) FROM likes;"
+    
+    - name: Cleanup
+      if: always()
+      run: |
+        docker compose down -v 

@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="user-profile">
+        <h1>{{ user.username }}'s Profile</h1>
+        <div class="bio">
+            {{ user.bio or 'No bio yet' }}
+        </div>
+        
+        {% if current_user.is_authenticated and current_user.id != user.id %}
+            <form action="{{ url_for('main.follow', username=user.username) }}" method="post">
+                <button type="submit" class="btn btn-primary">
+                    {% if current_user.is_following(user) %}
+                        Unfollow
+                    {% else %}
+                        Follow
+                    {% endif %}
+                </button>
+            </form>
+        {% endif %}
+    </div>
+    
+    <div class="tweets">
+        <h2>Tweets</h2>
+        {% for tweet in tweets %}
+            <div class="tweet">
+                <div class="tweet-header">
+                    <span class="timestamp">{{ tweet.created_at.strftime('%Y-%m-%d %H:%M') }}</span>
+                </div>
+                <div class="tweet-content">
+                    {{ tweet.content }}
+                </div>
+                {% if current_user.is_authenticated %}
+                    <div class="tweet-actions">
+                        <form action="{{ url_for('main.like', tweet_id=tweet.id) }}" method="post">
+                            <button type="submit" class="btn btn-sm btn-outline-primary">
+                                {% if current_user.id in tweet.likes|map(attribute='user_id')|list %}
+                                    Unlike
+                                {% else %}
+                                    Like
+                                {% endif %}
+                            </button>
+                        </form>
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %} 

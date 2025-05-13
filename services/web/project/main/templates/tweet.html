@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>New Tweet</h1>
+    <form action="" method="post">
+        <div class="form-group">
+            <label for="content">What's happening?</label>
+            <textarea class="form-control" id="content" name="content" rows="3" maxlength="280" required></textarea>
+            <small class="form-text text-muted">280 characters remaining</small>
+        </div>
+        <button type="submit" class="btn btn-primary">Tweet</button>
+    </form>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const textarea = document.getElementById('content');
+    const remaining = document.querySelector('.form-text');
+    
+    textarea.addEventListener('input', function() {
+        const remainingChars = 280 - this.value.length;
+        remaining.textContent = remainingChars + ' characters remaining';
+    });
+</script>
+{% endblock %} 
