@@ -8,15 +8,11 @@ from flask import (
 )
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
-from flask_migrate import Migrate
-from flask_login import LoginManager
-from config import Config
 
 
-db = SQLAlchemy()
-migrate = Migrate()
-login_manager = LoginManager()
-login_manager.login_view = 'auth.login'
+app = Flask(__name__)
+app.config.from_object("project.config.Config")
+db = SQLAlchemy(app)
 
 
 class User(db.Model):
