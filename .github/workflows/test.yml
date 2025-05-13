@@ -25,7 +25,12 @@ jobs:
     
     - name: Start containers and test
       run: |
-        docker compose up -d --build
+        # Copy schema file to the correct location
+        docker compose up -d db
+        docker cp services/postgres/schema.sql twitter_clone-db-1:/docker-entrypoint-initdb.d/
+        
+        # Start the rest of the services
+        docker compose up -d
         docker ps -a
         sleep 20
         
