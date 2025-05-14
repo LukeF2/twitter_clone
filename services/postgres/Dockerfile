@@ -15,6 +15,9 @@ ENV PATH="/opt/venv/bin:$PATH"
 # Install required Python packages in the virtual environment
 RUN /opt/venv/bin/pip install psycopg2-binary faker
 
+# Configure PostgreSQL to accept TCP/IP connections
+RUN echo "listen_addresses='*'" >> /usr/share/postgresql/postgresql.conf.sample
+
 # Copy initialization scripts
 COPY schema.sql /docker-entrypoint-initdb.d/
 COPY load_data.py /docker-entrypoint-initdb.d/
