@@ -25,6 +25,9 @@ jobs:
     
     - name: Start containers and test
       run: |
+        # Ensure schema file is in the correct location
+        cp services/postgres/schema.sql services/postgres/
+        
         # Build and start all services
         docker compose up -d --build
         docker ps -a
