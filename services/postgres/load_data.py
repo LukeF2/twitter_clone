@@ -11,7 +11,7 @@ def load_test_data(num_rows):
         dbname="hello_flask_dev",
         user="hello_flask",
         password="hello_flask",
-        host="db"
+        host="localhost"
     )
     cur = conn.cursor()
     
