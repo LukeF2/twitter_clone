@@ -6,12 +6,12 @@ from datetime import datetime, timedelta
 import random
 
 def load_test_data(num_rows):
-    # Connect to the database using environment variables
+    # Connect to the database using Unix socket
     conn = psycopg2.connect(
         dbname=os.getenv('POSTGRES_DB', 'hello_flask_dev'),
         user=os.getenv('POSTGRES_USER', 'hello_flask'),
         password=os.getenv('POSTGRES_PASSWORD', 'hello_flask'),
-        host='127.0.0.1'  # Use IP instead of localhost
+        host='/var/run/postgresql'  # Use Unix socket instead of TCP/IP
     )
     cur = conn.cursor()
     
