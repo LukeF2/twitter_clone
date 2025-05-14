@@ -3,4 +3,30 @@
 {% block content %}
 <h2>Home</h2>
 <p>Welcome to twitter clone</p>
+
+<div class="tweets">
+    {% for tweet, user in tweets %}
+    <div class="tweet">
+        <div class="tweet-header">
+            <span class="username">@{{ user.username }}</span>
+            <span class="timestamp">{{ tweet.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</span>
+        </div>
+        <div class="tweet-content">
+            {{ tweet.content }}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="pagination">
+    {% if current_page > 1 %}
+    <a href="{{ url_for('root', page=current_page-1) }}" class="btn">Previous</a>
+    {% endif %}
+    
+    <span class="page-info">Page {{ current_page }} of {{ total_pages }}</span>
+    
+    {% if current_page < total_pages %}
+    <a href="{{ url_for('root', page=current_page+1) }}" class="btn">Next</a>
+    {% endif %}
+</div>
 {% endblock %}

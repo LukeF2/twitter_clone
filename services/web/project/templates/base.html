@@ -1,12 +1,67 @@
-<h1>Twitter Clone </h1>
-<ol>
-
-    <li><a href>='/'>Home</a></li>
-    <li><a href='/login'>Login</a></li>
-    <li><a href='logout'>Logout</a></li>
-    <li><a href='/create user'>Create User</a></li>
-    <li><a href='/create message'>Create Message</a></li>    
-<ol>
-
-{% block content %}
-{% endblock %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Twitter Clone</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .tweet {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        .tweet-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            color: #666;
+        }
+        .username {
+            font-weight: bold;
+            color: #1da1f2;
+        }
+        .tweet-content {
+            font-size: 16px;
+            line-height: 1.4;
+        }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+            gap: 10px;
+        }
+        .btn {
+            padding: 8px 16px;
+            background-color: #1da1f2;
+            color: white;
+            text-decoration: none;
+            border-radius: 20px;
+        }
+        .btn:hover {
+            background-color: #1991da;
+        }
+        .page-info {
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="{{ url_for('root') }}">Home</a>
+        {% if current_user.is_authenticated %}
+            <a href="{{ url_for('logout') }}">Logout</a>
+        {% else %}
+            <a href="{{ url_for('login') }}">Login</a>
+        {% endif %}
+    </nav>
+    
+    {% block content %}
+    {% endblock %}
+</body>
+</html>
