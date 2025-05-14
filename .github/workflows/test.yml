@@ -61,6 +61,13 @@ jobs:
           fi
           sleep 1
         done
+
+        # Load schema
+        echo "Loading schema..."
+        docker compose exec -T db psql -U hello_flask -d hello_flask_dev -f /docker-entrypoint-initdb.d/schema.sql
+
+        # Wait a bit for schema to be loaded
+        sleep 2
         
         # Verify data was loaded
         echo "Verifying data..."
