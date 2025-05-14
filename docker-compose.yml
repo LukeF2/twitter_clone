@@ -10,6 +10,11 @@ services:
       - 1096:5000
     env_file:
       - ./.env.dev
+    environment:
+      - DATABASE=postgres
+      - SQL_HOST=db
+      - SQL_PORT=5432
+      - FLASK_DEBUG=1
     depends_on:
       - db
   db:
