@@ -35,4 +35,5 @@ COPY . .
 RUN chmod +x /usr/src/app/entrypoint.sh
 
 # run entrypoint.sh with wait-for-db
-CMD ["/usr/local/bin/wait-for-db.sh", "db", "python", "manage.py", "run", "-h", "0.0.0.0"]
+ENTRYPOINT ["/usr/local/bin/wait-for-db.sh", "db"]
+CMD ["python", "manage.py", "run", "-h", "0.0.0.0"]

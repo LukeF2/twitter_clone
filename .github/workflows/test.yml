@@ -15,13 +15,16 @@ jobs:
     - name: Setup dependencies
       run: |
         pip3 install -r services/web/requirements.txt
-        pip install faker sqlalchemy psycopg2-binary
     
     - name: Create .env.dev file
       run: |
-        echo "DATABASE_URL=postgresql://hello_flask:hello_flask@db:5432/hello_flask_dev" > .env.dev
-        echo "SECRET_KEY=test-secret-key" >> .env.dev
-        echo "APP_FOLDER=/usr/src/app" >> .env.dev
+        echo "DATABASE=postgres" > .env.dev
+        echo "SQL_HOST=db" >> .env.dev
+        echo "SQL_PORT=5432" >> .env.dev
+        echo "FLASK_DEBUG=1" >> .env.dev
+        echo "POSTGRES_USER=hello_flask" >> .env.dev
+        echo "POSTGRES_PASSWORD=hello_flask" >> .env.dev
+        echo "POSTGRES_DB=hello_flask_dev" >> .env.dev
     
     - name: Start containers and test
       run: |
@@ -59,16 +62,8 @@ jobs:
           sleep 1
         done
         
-        # Load schema
-        docker compose exec -T db psql -U hello_flask -d hello_flask_dev -f /docker-entrypoint-initdb.d/schema.sql
-        
-        # Copy load_data.py to web container
-        docker cp services/postgres/load_data.py twitter_clone-web-1:/usr/src/app/
-        
-        # Load test data (100 rows for testing)
-        docker compose exec -T web python /usr/src/app/load_data.py 100
-        
         # Verify data was loaded
+        echo "Verifying data..."
         docker compose exec -T db psql -U hello_flask -d hello_flask_dev -c "SELECT COUNT(*) FROM users;"
         docker compose exec -T db psql -U hello_flask -d hello_flask_dev -c "SELECT COUNT(*) FROM tweets;"
         docker compose exec -T db psql -U hello_flask -d hello_flask_dev -c "SELECT COUNT(*) FROM likes;"

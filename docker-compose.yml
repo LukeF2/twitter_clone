@@ -16,6 +16,9 @@ services:
       - SQL_HOST=db
       - SQL_PORT=5432
       - FLASK_DEBUG=1
+      - POSTGRES_USER=hello_flask
+      - POSTGRES_PASSWORD=hello_flask
+      - POSTGRES_DB=hello_flask_dev
     depends_on:
       - db
   db:
