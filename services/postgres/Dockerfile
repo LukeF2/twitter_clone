@@ -15,9 +15,6 @@ ENV PATH="/opt/venv/bin:$PATH"
 # Install required Python packages in the virtual environment
 RUN /opt/venv/bin/pip install psycopg2-binary faker
 
-# Configure PostgreSQL to accept TCP/IP connections
-RUN echo "listen_addresses='*'" >> /usr/share/postgresql/postgresql.conf.sample
-
 # Copy initialization scripts
 COPY schema.sql /docker-entrypoint-initdb.d/
 COPY load_data.py /docker-entrypoint-initdb.d/
@@ -41,5 +38,10 @@ RUN echo '#!/bin/bash\n\
 
 # Create an initialization script that will run after schema.sql
 RUN echo '#!/bin/bash\n\
+    # Configure PostgreSQL to accept TCP/IP connections\n\
+    echo "listen_addresses = '\''*'\''" >> /var/lib/postgresql/data/postgresql.conf\n\
+    echo "host all all 0.0.0.0/0 md5" >> /var/lib/postgresql/data/pg_hba.conf\n\
+    \n\
+    # Wait for database to be ready\n\
     /usr/local/bin/wait-for-db.sh localhost /opt/venv/bin/python /docker-entrypoint-initdb.d/load_data.py 100' > /docker-entrypoint-initdb.d/02_load_data.sh \
     && chmod +x /docker-entrypoint-initdb.d/02_load_data.sh 
