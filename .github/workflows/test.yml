@@ -44,6 +44,21 @@ jobs:
           sleep 1
         done
         
+        # Wait for database to be ready
+        echo "Waiting for database..."
+        for i in {1..30}; do
+          if docker compose exec -T db pg_isready -U hello_flask; then
+            echo "Database is ready!"
+            break
+          fi
+          if [ $i -eq 30 ]; then
+            echo "Database failed to start"
+            docker compose logs db
+            exit 1
+          fi
+          sleep 1
+        done
+        
         # Load schema
         docker compose exec -T db psql -U hello_flask -d hello_flask_dev -f /docker-entrypoint-initdb.d/schema.sql
         
