@@ -1,15 +1,10 @@
 -- Users table
 CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
-    username VARCHAR(64) UNIQUE NOT NULL,
-    email VARCHAR(120) UNIQUE NOT NULL,
-    password_hash VARCHAR(128) NOT NULL,
-    bio VARCHAR(160),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    email VARCHAR(128) NOT NULL UNIQUE,
+    active BOOLEAN NOT NULL
 );
 
--- Create index on username for faster lookups
-CREATE INDEX IF NOT EXISTS idx_users_username ON users(username);
 -- Create index on email for faster lookups
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 

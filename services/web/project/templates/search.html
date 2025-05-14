@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Search Messages</h2>
+
+<form method="GET" action="{{ url_for('search') }}" class="search-form">
+    <div class="form-group">
+        <input type="text" name="q" value="{{ query }}" placeholder="Enter search terms..." required>
+        <button type="submit" class="btn">Search</button>
+    </div>
+</form>
+
+{% if query %}
+    <h3>Search Results for "{{ query }}"</h3>
+    
+    {% if tweets %}
+        {% for tweet, user, rank, highlighted_content in tweets %}
+            <div class="tweet">
+                <div class="tweet-header">
+                    <span class="username">{{ user.username }}</span>
+                    <span class="timestamp">{{ tweet.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</span>
+                </div>
+                <div class="tweet-content">
+                    {{ highlighted_content|safe }}
+                </div>
+            </div>
+        {% endfor %}
+        
+        {% if total_pages > 1 %}
+            <div class="pagination">
+                {% if current_page > 1 %}
+                    <a href="{{ url_for('search', q=query, page=current_page-1) }}" class="btn">Previous</a>
+                {% endif %}
+                
+                <span class="page-info">Page {{ current_page }} of {{ total_pages }}</span>
+                
+                {% if current_page < total_pages %}
+                    <a href="{{ url_for('search', q=query, page=current_page+1) }}" class="btn">Next</a>
+                {% endif %}
+            </div>
+        {% endif %}
+    {% else %}
+        <p>No messages found matching your search.</p>
+    {% endif %}
+{% endif %}
+{% endblock %} 

@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Create Message</h2>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+<form method="POST" action="{{ url_for('create_message') }}">
+    <div class="form-group">
+        <label for="content">Message:</label>
+        <textarea id="content" name="content" rows="4" required></textarea>
+    </div>
+    
+    <button type="submit" class="btn">Post Message</button>
+</form>
+{% endblock %} 
