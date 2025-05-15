@@ -1,5 +1,7 @@
 # Twitter Clone
 
+[![Tests](https://github.com/LukeF2/twitter_clone/actions/workflows/test.yml/badge.svg)](https://github.com/LukeF2/twitter_clone/actions/workflows/test.yml)
+
 A full-stack Twitter clone built with Flask and PostgreSQL, featuring real-time updates, full-text search, and like functionality.
 
 ## Features
