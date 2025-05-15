@@ -5,7 +5,7 @@
 <p>Welcome to twitter clone</p>
 
 <div class="tweets">
-    {% for tweet, user in tweets %}
+    {% for tweet, user, like_count in tweets %}
     <div class="tweet">
         <div class="tweet-header">
             <span class="username">@{{ user.username }}</span>
@@ -13,6 +13,17 @@
         </div>
         <div class="tweet-content">
             {{ tweet.content }}
+        </div>
+        <div class="tweet-actions">
+            {% if current_user.is_authenticated %}
+            <form action="{{ url_for('like_tweet', tweet_id=tweet.id) }}" method="POST" style="display: inline;">
+                <button type="submit" class="like-button {% if tweet.id in user_likes %}liked{% endif %}">
+                    ❤️ {{ like_count or 0 }}
+                </button>
+            </form>
+            {% else %}
+            <span class="like-count">❤️ {{ like_count or 0 }}</span>
+            {% endif %}
         </div>
     </div>
     {% endfor %}

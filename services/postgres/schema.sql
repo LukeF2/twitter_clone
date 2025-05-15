@@ -1,29 +1,32 @@
 -- Users table
 CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
+    username VARCHAR(64) NOT NULL UNIQUE,
     email VARCHAR(128) NOT NULL UNIQUE,
-    active BOOLEAN NOT NULL
+    password_hash VARCHAR(128) NOT NULL,
+    bio VARCHAR(160),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Create index on email for faster lookups
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
+CREATE INDEX IF NOT EXISTS idx_users_username ON users(username);
 
 -- Tweets table
 CREATE TABLE IF NOT EXISTS tweets (
     id SERIAL PRIMARY KEY,
     content VARCHAR(280) NOT NULL,
     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    content_tsv tsvector GENERATED ALWAYS AS (to_tsvector('english', content)) STORED
 );
 
 -- Create index on user_id for faster lookups of user's tweets
 CREATE INDEX IF NOT EXISTS idx_tweets_user_id ON tweets(user_id);
 -- Create index on created_at for faster chronological queries
 CREATE INDEX IF NOT EXISTS idx_tweets_created_at ON tweets(created_at);
-
--- Create RUM index for full-text search
-CREATE EXTENSION IF NOT EXISTS rum;
-CREATE INDEX IF NOT EXISTS idx_tweets_content_rum ON tweets USING rum (to_tsvector('english', content));
+-- Create GIN index for full-text search
+CREATE INDEX IF NOT EXISTS idx_tweets_content_gin ON tweets USING gin (content_tsv);
 
 -- Likes table
 CREATE TABLE IF NOT EXISTS likes (

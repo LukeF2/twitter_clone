@@ -4,6 +4,13 @@ import psycopg2
 from faker import Faker
 from datetime import datetime, timedelta
 import random
+from werkzeug.security import generate_password_hash
+
+def generate_email(username):
+    # Generate a shorter domain
+    domains = ['gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com', 'example.com']
+    domain = random.choice(domains)
+    return f"{username}@{domain}"
 
 def load_test_data(num_rows, is_test=False):
     # Connect to the database using Unix socket
@@ -20,11 +27,13 @@ def load_test_data(num_rows, is_test=False):
     # Generate users
     print(f"Generating {num_rows} users...")
     for i in range(num_rows):
-        email = fake.email()
+        username = fake.user_name()[:64]  # Ensure username is not longer than 64 chars
+        email = generate_email(username)  # Generate a controlled email format
+        password = fake.password()  # Generate a random password
         
         cur.execute(
-            "INSERT INTO users (email, active) VALUES (%s, %s)",
-            (email, True)
+            "INSERT INTO users (username, email, password_hash) VALUES (%s, %s, %s)",
+            (username, email, generate_password_hash(password))
         )
         if not is_test and i % 10000 == 0:
             print(f"Generated {i} users...")
@@ -37,7 +46,7 @@ def load_test_data(num_rows, is_test=False):
     print(f"Generating {num_rows * 10} tweets...")
     for i in range(num_rows * 10):
         user_id = random.randint(1, num_rows)
-        content = fake.text(max_nb_chars=280)
+        content = fake.text(max_nb_chars=280)  # Twitter's max length
         created_at = fake.date_time_between(start_date='-1y', end_date='now')
         
         cur.execute(

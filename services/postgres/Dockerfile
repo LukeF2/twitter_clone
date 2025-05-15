@@ -13,8 +13,7 @@ RUN python3 -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
 # Install required Python packages in the virtual environment
-RUN /opt/venv/bin/pip install psycopg2-binary faker
-
+RUN /opt/venv/bin/pip install psycopg2-binary faker werkzeug
 # Copy initialization scripts
 COPY schema.sql /docker-entrypoint-initdb.d/
 COPY load_data.py /docker-entrypoint-initdb.d/

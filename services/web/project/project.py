@@ -25,6 +25,7 @@ class User(UserMixin, db.Model):
     bio = db.Column(db.String(160))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     tweets = db.relationship('Tweet', backref='author', lazy=True)
+    likes = db.relationship('Like', backref='user', lazy=True)
 
 class Tweet(db.Model):
     __tablename__ = 'tweets'
@@ -32,7 +33,19 @@ class Tweet(db.Model):
     content = db.Column(db.String(280), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    content_tsv = db.Column(db.Text)  # For full-text search
+    likes = db.relationship('Like', backref='tweet', lazy=True)
+
+class Like(db.Model):
+    __tablename__ = 'likes'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
+    tweet_id = db.Column(db.Integer, db.ForeignKey('tweets.id'), nullable=False, index=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, index=True)
+    
+    # Add a unique constraint to prevent duplicate likes
+    __table_args__ = (
+        db.UniqueConstraint('user_id', 'tweet_id', name='unique_user_tweet_like'),
+    )
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -43,22 +56,39 @@ def root():
     page = request.args.get('page', 1, type=int)
     per_page = 20
     
-    # Get tweets with user info, ordered by creation time
-    tweets = db.session.query(Tweet, User)\
-        .join(User)\
+    # First get the tweet IDs for the current page
+    tweet_ids = db.session.query(Tweet.id)\
         .order_by(Tweet.created_at.desc())\
         .offset((page - 1) * per_page)\
         .limit(per_page)\
-        .all()
+        .subquery()
     
-    # Get total count for pagination
-    total_tweets = Tweet.query.count()
+    # Then get the full tweet data with user info and like counts
+    tweets = db.session.query(
+        Tweet,
+        User,
+        db.func.count(Like.id).label('like_count')
+    ).join(User, Tweet.user_id == User.id)\
+     .outerjoin(Like, Tweet.id == Like.tweet_id)\
+     .filter(Tweet.id.in_(tweet_ids))\
+     .group_by(Tweet.id, User.id)\
+     .order_by(Tweet.created_at.desc())\
+     .all()
+    
+    # Get total count for pagination using a more efficient count query
+    total_tweets = db.session.query(db.func.count(Tweet.id)).scalar()
     total_pages = (total_tweets + per_page - 1) // per_page
+    
+    # Get current user's likes for the displayed tweets
+    user_likes = set()
+    if current_user.is_authenticated:
+        user_likes = {like.tweet_id for like in current_user.likes}
     
     return render_template('root.html', 
                          tweets=tweets,
                          current_page=page,
-                         total_pages=total_pages)
+                         total_pages=total_pages,
+                         user_likes=user_likes)
 
 @app.route('/search')
 def search():
@@ -186,7 +216,8 @@ def create_message():
             
         tweet = Tweet(
             content=content,
-            user_id=current_user.id
+            user_id=current_user.id,
+            created_at=datetime.utcnow()
         )
         
         db.session.add(tweet)
@@ -197,5 +228,23 @@ def create_message():
         
     return render_template('create_message.html')
 
+@app.route('/like/<int:tweet_id>', methods=['POST'])
+@login_required
+def like_tweet(tweet_id):
+    tweet = Tweet.query.get_or_404(tweet_id)
+    existing_like = Like.query.filter_by(user_id=current_user.id, tweet_id=tweet_id).first()
+    
+    if existing_like:
+        db.session.delete(existing_like)
+        db.session.commit()
+        flash('Tweet unliked!', 'success')
+    else:
+        like = Like(user_id=current_user.id, tweet_id=tweet_id)
+        db.session.add(like)
+        db.session.commit()
+        flash('Tweet liked!', 'success')
+    
+    return redirect(url_for('root'))
+
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=1147)
+    app.run(host='0.0.0.0', port=1147, debug=True)
