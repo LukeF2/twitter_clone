@@ -1,3 +1,14 @@
+-- Generate 10,000,000 tweets
+WITH user_ids AS (
+    SELECT id FROM users
+)
+INSERT INTO tweets (content, user_id, created_at)
+SELECT 
+    'Tweet content ' || generate_series,
+    (SELECT id FROM user_ids ORDER BY random() LIMIT 1),  -- Random existing user_id
+    NOW() - (random() * interval '365 days')  -- Random timestamp within last year
+FROM generate_series(1, 10000000);
+
 -- Generate 1,000,000 likes
 WITH tweet_ids AS (
     SELECT id FROM tweets
