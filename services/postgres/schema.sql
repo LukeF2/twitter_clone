@@ -21,6 +21,10 @@ CREATE INDEX IF NOT EXISTS idx_tweets_user_id ON tweets(user_id);
 -- Create index on created_at for faster chronological queries
 CREATE INDEX IF NOT EXISTS idx_tweets_created_at ON tweets(created_at);
 
+-- Create RUM index for full-text search
+CREATE EXTENSION IF NOT EXISTS rum;
+CREATE INDEX IF NOT EXISTS idx_tweets_content_rum ON tweets USING rum (to_tsvector('english', content));
+
 -- Likes table
 CREATE TABLE IF NOT EXISTS likes (
     id SERIAL PRIMARY KEY,

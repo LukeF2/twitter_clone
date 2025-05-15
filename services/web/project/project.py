@@ -71,7 +71,8 @@ def search():
     
     # Create the search query using RUM index
     search_query = text("""
-        SELECT t.*, u.*, 
+        SELECT t.id as tweet_id, t.content, t.created_at as tweet_created_at,
+               u.id as user_id, u.username, u.email,
                ts_rank_cd(t.content_tsv, to_tsquery('english', :query)) as rank,
                ts_headline('english', t.content, to_tsquery('english', :query), 
                           'StartSel=<mark>,StopSel=</mark>,MaxFragments=1,MaxWords=50') as highlighted_content
@@ -197,4 +198,4 @@ def create_message():
     return render_template('create_message.html')
 
 if __name__ == '__main__':
-    app.run(port=1147)
+    app.run(host='0.0.0.0', port=1147)

@@ -3,12 +3,12 @@ version: '3.8'
 services:
   web:
     build: ./services/web
-    command: python manage.py run -h 0.0.0.0
+    command: python project/project.py
     volumes:
       - ./services/web/:/usr/src/app/
       - ./requirements.txt:/usr/src/app/requirements.txt
     ports:
-      - 1096:5000
+      - "1147:1147"
     env_file:
       - ./.env.dev
     environment:

@@ -14,14 +14,14 @@
     <h3>Search Results for "{{ query }}"</h3>
     
     {% if tweets %}
-        {% for tweet, user, rank, highlighted_content in tweets %}
+        {% for tweet in tweets %}
             <div class="tweet">
                 <div class="tweet-header">
-                    <span class="username">{{ user.username }}</span>
-                    <span class="timestamp">{{ tweet.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</span>
+                    <span class="username">{{ tweet.username }}</span>
+                    <span class="timestamp">{{ tweet.tweet_created_at.strftime('%Y-%m-%d %H:%M:%S') }}</span>
                 </div>
                 <div class="tweet-content">
-                    {{ highlighted_content|safe }}
+                    {{ tweet.highlighted_content|safe }}
                 </div>
             </div>
         {% endfor %}
