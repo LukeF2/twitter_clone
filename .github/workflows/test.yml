@@ -88,7 +88,7 @@ jobs:
 
         # Load test data
         echo "Loading test data..."
-        docker compose exec -T db /opt/venv/bin/python /docker-entrypoint-initdb.d/load_data.py 100
+        docker compose exec -T db psql -U hello_flask -d hello_flask_dev -f /docker-entrypoint-initdb.d/generate_data.sql
         
         # Verify data was loaded
         echo "Verifying data..."
