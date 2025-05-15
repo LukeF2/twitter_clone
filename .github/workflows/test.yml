@@ -12,6 +12,10 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     
+    - name: Copy .env.dev to correct location
+      run: |
+        cp .env.dev /home/runner/work/twitter_clone/.env.dev
+    
     - name: Start containers and test
       run: |
         # Build and start all services
