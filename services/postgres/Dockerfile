@@ -15,9 +15,10 @@ ENV PATH="/opt/venv/bin:$PATH"
 
 # Install required Python packages in the virtual environment
 RUN /opt/venv/bin/pip install psycopg2-binary faker werkzeug
+
 # Copy initialization scripts
 COPY schema.sql /docker-entrypoint-initdb.d/
-COPY load_data.py /docker-entrypoint-initdb.d/
+COPY generate_test_data.sql /docker-entrypoint-initdb.d/
 
 # Create a wait-for-db script
 RUN echo '#!/bin/bash\n\
@@ -39,5 +40,5 @@ RUN echo '#!/bin/bash\n\
 # Create an initialization script that will run after schema.sql
 RUN echo '#!/bin/bash\n\
     # Wait for database to be ready\n\
-    /usr/local/bin/wait-for-db.sh localhost /opt/venv/bin/python /docker-entrypoint-initdb.d/load_data.py 100' > /docker-entrypoint-initdb.d/02_load_data.sh \
+    /usr/local/bin/wait-for-db.sh localhost psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -f /docker-entrypoint-initdb.d/generate_test_data.sql' > /docker-entrypoint-initdb.d/02_load_data.sh \
     && chmod +x /docker-entrypoint-initdb.d/02_load_data.sh 
