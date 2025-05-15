@@ -6,6 +6,7 @@ RUN apt-get update && apt-get install -y \
     python3-pip \
     python3-psycopg2 \
     python3-venv \
+    postgresql-13-rum \
     && rm -rf /var/lib/apt/lists/*
 
 # Create and activate virtual environment

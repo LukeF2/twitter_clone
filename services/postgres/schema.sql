@@ -1,3 +1,6 @@
+-- Enable RUM extension for full-text search
+CREATE EXTENSION IF NOT EXISTS rum;
+
 -- Users table
 CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
@@ -25,8 +28,8 @@ CREATE TABLE IF NOT EXISTS tweets (
 CREATE INDEX IF NOT EXISTS idx_tweets_user_id ON tweets(user_id);
 -- Create index on created_at for faster chronological queries
 CREATE INDEX IF NOT EXISTS idx_tweets_created_at ON tweets(created_at);
--- Create GIN index for full-text search
-CREATE INDEX IF NOT EXISTS idx_tweets_content_gin ON tweets USING gin (content_tsv);
+-- Create RUM index for full-text search (replacing GIN)
+CREATE INDEX IF NOT EXISTS idx_tweets_content_rum ON tweets USING rum (content_tsv);
 
 -- Likes table
 CREATE TABLE IF NOT EXISTS likes (
