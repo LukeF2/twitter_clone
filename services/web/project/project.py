@@ -109,7 +109,7 @@ def search():
         FROM tweets t
         JOIN users u ON t.user_id = u.id
         WHERE t.content_tsv @@ to_tsquery('english', :query)
-        ORDER BY rank DESC
+        ORDER BY rank DESC, t.created_at DESC
         LIMIT :limit OFFSET :offset
     """)
     
