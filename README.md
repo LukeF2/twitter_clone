@@ -45,14 +45,14 @@ docker compose up -d --build
 ```
 
 4. The application will be available at:
-   - Web interface: http://localhost:5000
-   - API endpoints: http://localhost:5000/api/*
+   - Web interface: http://localhost:1147
+   - API endpoints: http://localhost:1147/api/*
 
 ## Connecting to the Web Server
 
 ### Local Access
 If you're running the application locally, you can access it at:
-- http://localhost:5000
+- http://localhost:1147
 
 ### Remote Access
 If you're connecting to a remote server:
@@ -63,7 +63,12 @@ ssh <username>@<server-ip>
 ```
 
 2. The web server is accessible at:
-- http://<server-ip>:5000
+- http://<server-ip>:1147
+
+### Production Environment
+In production, the application is served through Nginx:
+- Web interface: http://<server-ip>:9090
+- API endpoints: http://<server-ip>:9090/api/*
 
 ## Database
 
@@ -116,7 +121,3 @@ twitter_clone/
 3. Commit your changes
 4. Push to the branch
 5. Create a Pull Request
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details. 
