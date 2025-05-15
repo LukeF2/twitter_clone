@@ -52,18 +52,7 @@ docker compose up -d --build
 ### Local Access
 If you're running the application locally, you can access it at:
 - http://localhost:1147
-
-### Remote Access
-If you're connecting to a remote server:
-
-1. SSH into the server:
-```bash
-ssh <username>@<server-ip>
-```
-
-2. The web server is accessible at:
-- http://<server-ip>:1147
-- 
+-  
 ## Database
 
 The application uses PostgreSQL with the following features:
