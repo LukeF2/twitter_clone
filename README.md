@@ -46,7 +46,6 @@ docker compose up -d --build
 
 4. The application will be available at:
    - Web interface: http://localhost:1147
-   - API endpoints: http://localhost:1147/api/*
 
 ## Connecting to the Web Server
 
@@ -64,12 +63,7 @@ ssh <username>@<server-ip>
 
 2. The web server is accessible at:
 - http://<server-ip>:1147
-
-### Production Environment
-In production, the application is served through Nginx:
-- Web interface: http://<server-ip>:9090
-- API endpoints: http://<server-ip>:9090/api/*
-
+- 
 ## Database
 
 The application uses PostgreSQL with the following features:
@@ -99,25 +93,3 @@ The application includes scripts for generating test data:
 - `generate_data.sql`: Generates a large dataset for production
 - `generate_test_data.sql`: Generates a small dataset (100 rows) for testing
 
-## Project Structure
-
-```
-twitter_clone/
-├── services/
-│   ├── web/              # Flask application
-│   │   ├── project/      # Main application code
-│   │   └── requirements.txt
-│   └── postgres/         # Database setup
-│       ├── schema.sql    # Database schema
-│       └── generate_data.sql
-├── docker-compose.yml    # Docker configuration
-└── .env.dev             # Environment variables
-```
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a Pull Request
