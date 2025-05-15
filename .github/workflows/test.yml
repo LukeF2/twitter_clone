@@ -109,3 +109,10 @@ jobs:
       if: always()
       run: |
         docker compose down -v 
+
+        # Create database tables
+        python services/web/project/project.py
+        # Load test data using generate_test_data.sql (100 rows per table)
+        PGPASSWORD=hello_flask psql -h localhost -U hello_flask -d hello_flask_test -f services/postgres/generate_test_data.sql
+        # Run tests
+        pytest 
