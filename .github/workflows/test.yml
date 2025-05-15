@@ -45,6 +45,15 @@ jobs:
       env:
         DATABASE_URL: postgresql://hello_flask:hello_flask@localhost:5432/hello_flask_test
       run: |
+        # Create .env.dev file
+        echo "DATABASE=postgres" > .env.dev
+        echo "SQL_HOST=db" >> .env.dev
+        echo "SQL_PORT=5432" >> .env.dev
+        echo "FLASK_DEBUG=1" >> .env.dev
+        echo "POSTGRES_USER=hello_flask" >> .env.dev
+        echo "POSTGRES_PASSWORD=hello_flask" >> .env.dev
+        echo "POSTGRES_DB=hello_flask_dev" >> .env.dev
+
         # Build and start all services
         docker compose up -d --build
         docker ps -a
