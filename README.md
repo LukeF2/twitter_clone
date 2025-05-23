@@ -52,7 +52,7 @@ docker compose up -d --build
 ### Local Access
 If you're running the application locally, you can access it at:
 - http://localhost:1147
--  
+
 ## Database
 
 The application uses PostgreSQL with the following features:
