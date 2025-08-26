@@ -47,11 +47,6 @@ docker compose up -d --build
 4. The application will be available at:
    - Web interface: http://localhost:1147
 
-## Connecting to the Web Server
-
-### Local Access
-If you're running the application locally, you can access it at:
-- http://localhost:1147
 
 ## Database
 
